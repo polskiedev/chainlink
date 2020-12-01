@@ -15,8 +15,8 @@ contract AggregatorProxy is AggregatorV2V3Interface, Owned {
     uint16 id;
     AggregatorV2V3Interface aggregator;
   }
-  AggregatorV2V3Interface public s_proposedAggregator;
-  mapping(uint16 => AggregatorV2V3Interface) public s_phaseAggregators;
+  AggregatorV2V3Interface private s_proposedAggregator;
+  mapping(uint16 => AggregatorV2V3Interface) private s_phaseAggregators;
   Phase private s_currentPhase;
   
   uint256 constant private PHASE_OFFSET = 64;
@@ -26,7 +26,7 @@ contract AggregatorProxy is AggregatorV2V3Interface, Owned {
   event AggregatorProposed(address indexed current, address indexed proposed);
   event AggregatorConfirmed(address indexed previous, address indexed latest);
 
-  constructor(address aggregatorAddress) public Owned() {
+  constructor(address aggregatorAddress) public Owned(msg.sender) {
     setAggregator(aggregatorAddress);
   }
 
@@ -348,6 +348,30 @@ contract AggregatorProxy is AggregatorV2V3Interface, Owned {
     returns (string memory)
   {
     return s_currentPhase.aggregator.description();
+  }
+
+  /**
+   * @notice returns the current proposed aggregator
+   */
+  function proposedAggregator()
+    external
+    view
+    returns (address)
+  {
+    return address(s_proposedAggregator);
+  }
+
+  /**
+   * @notice return a phase aggregator using the phaseId
+   *
+   * @param phaseId uint16
+   */
+  function phaseAggregators(uint16 phaseId)
+    external
+    view
+    returns (address)
+  {
+    return address(s_phaseAggregators[phaseId]);
   }
 
   /**

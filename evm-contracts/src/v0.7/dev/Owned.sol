@@ -6,7 +6,7 @@ pragma solidity ^0.7.0;
  */
 contract Owned {
 
-  address public s_owner;
+  address private s_owner;
   address private s_pendingOwner;
 
   event OwnershipTransferRequested(
@@ -18,12 +18,12 @@ contract Owned {
     address indexed to
   );
 
-  constructor() {
-    s_owner = msg.sender;
+  constructor(address newOwner) {
+    s_owner = newOwner;
   }
 
   /**
-   * @dev Allows an owner to begin transferring ownership to a new address,
+   * @notice Allows an owner to begin transferring ownership to a new address,
    * pending.
    */
   function transferOwnership(address to)
@@ -38,7 +38,7 @@ contract Owned {
   }
 
   /**
-   * @dev Allows an ownership transfer to be completed by the recipient.
+   * @notice Allows an ownership transfer to be completed by the recipient.
    */
   function acceptOwnership()
     external
@@ -53,7 +53,14 @@ contract Owned {
   }
 
   /**
-   * @dev Reverts if called by anyone other than the contract owner.
+   * @notice Get the current owner
+   */
+  function owner() public view returns (address) {
+    return s_owner;
+  }
+
+  /**
+   * @notice Reverts if called by anyone other than the contract owner.
    */
   modifier onlyOwner() {
     require(msg.sender == s_owner, "Only callable by owner");

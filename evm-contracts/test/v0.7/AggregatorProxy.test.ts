@@ -7,12 +7,12 @@ import {
 import { assert } from 'chai'
 import { ethers } from 'ethers'
 import { BigNumber } from 'ethers/utils'
-import { MockV2AggregatorFactory } from '../../ethers/v0.7/MockV2AggregatorFactory'
-import { MockV3AggregatorFactory } from '../../ethers/v0.7/MockV3AggregatorFactory'
+import { MockV2AggregatorFactory } from '../../ethers/v0.6/MockV2AggregatorFactory'
+import { MockV3AggregatorFactory } from '../../ethers/v0.6/MockV3AggregatorFactory'
 import { AggregatorProxyFactory } from '../../ethers/v0.7/AggregatorProxyFactory'
-import { AggregatorFacadeFactory } from '../../ethers/v0.7/AggregatorFacadeFactory'
+import { AggregatorFacadeFactory } from '../../ethers/v0.6/AggregatorFacadeFactory'
 import { FluxAggregatorFactory } from '../../ethers/v0.6/FluxAggregatorFactory'
-import { ReverterFactory } from '../../ethers/v0.7/ReverterFactory'
+import { ReverterFactory } from '../../ethers/v0.6/ReverterFactory'
 
 let personas: setup.Personas
 let defaultAccount: ethers.Wallet
@@ -80,16 +80,16 @@ describe('AggregatorProxy', () => {
       'latestRound',
       'latestRoundData',
       'latestTimestamp',
-      's_phaseAggregators',
+      'phaseAggregators',
       'phaseId',
       'proposeAggregator',
-      's_proposedAggregator',
+      'proposedAggregator',
       'proposedGetRoundData',
       'proposedLatestRoundData',
       'version',
       // Ownable methods:
       'acceptOwnership',
-      's_owner',
+      'owner',
       'transferOwnership',
     ])
   })
@@ -97,7 +97,7 @@ describe('AggregatorProxy', () => {
   describe('constructor', () => {
     it('sets the proxy phase and aggregator', async () => {
       matchers.bigNum(1, await proxy.phaseId())
-      assert.equal(aggregator.address, await proxy.s_phaseAggregators(1))
+      assert.equal(aggregator.address, await proxy.phaseAggregators(1))
     })
   })
 
@@ -516,7 +516,7 @@ describe('AggregatorProxy', () => {
           .connect(personas.Carol)
           .proposeAggregator(aggregator2.address)
 
-        assert.equal(aggregator2.address, await proxy.s_proposedAggregator())
+        assert.equal(aggregator2.address, await proxy.proposedAggregator())
       })
 
       it('emits an AggregatorProposed event', async () => {
@@ -595,14 +595,14 @@ describe('AggregatorProxy', () => {
       it('sets the proxy phase and aggregator', async () => {
         assert.equal(
           '0x0000000000000000000000000000000000000000',
-          await proxy.s_phaseAggregators(2),
+          await proxy.phaseAggregators(2),
         )
 
         await proxy
           .connect(personas.Carol)
           .confirmAggregator(aggregator2.address)
 
-        assert.equal(aggregator2.address, await proxy.s_phaseAggregators(2))
+        assert.equal(aggregator2.address, await proxy.phaseAggregators(2))
       })
 
       it('emits an AggregatorConfirmed event', async () => {
@@ -649,7 +649,7 @@ describe('AggregatorProxy', () => {
         await proxy
           .connect(defaultAccount)
           .proposeAggregator(aggregator2.address)
-        assert.equal(await proxy.s_proposedAggregator(), aggregator2.address)
+        assert.equal(await proxy.proposedAggregator(), aggregator2.address)
       })
 
       it('returns the data for the proposed aggregator', async () => {
@@ -690,7 +690,7 @@ describe('AggregatorProxy', () => {
         await proxy
           .connect(defaultAccount)
           .proposeAggregator(aggregator2.address)
-        assert.equal(await proxy.s_proposedAggregator(), aggregator2.address)
+        assert.equal(await proxy.proposedAggregator(), aggregator2.address)
       })
 
       it('returns the data for the proposed aggregator', async () => {
