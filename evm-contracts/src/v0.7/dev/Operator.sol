@@ -4,8 +4,8 @@ import "./LinkTokenReceiver.sol";
 import "./Owned.sol";
 import "./OperatorProxy.sol";
 import "../interfaces/ChainlinkRequestInterface.sol";
-import "../interfaces/OracleInterface.sol";
-import "../interfaces/OracleInterface2.sol";
+import "../interfaces/OperatorInterface.sol";
+import "../interfaces/OperatorInterface2.sol";
 import "../interfaces/LinkTokenInterface.sol";
 import "../interfaces/WithdrawalInterface.sol";
 import "../vendor/SafeMathChainlink.sol";
@@ -18,8 +18,8 @@ contract Operator is
   LinkTokenReceiver,
   Owned,
   ChainlinkRequestInterface,
-  OracleInterface,
-  OracleInterface2,
+  OperatorInterface,
+  OperatorInterface2,
   WithdrawalInterface
 {
   using SafeMathChainlink for uint256;
@@ -71,7 +71,7 @@ contract Operator is
     Owned(owner)
   {
     linkToken = LinkTokenInterface(link); // external but already deployed and unalterable
-    new OperatorProxy();
+    new OperatorProxy(link);
   }
 
   // EXTERNAL FUNCTIONS
@@ -248,7 +248,7 @@ contract Operator is
    */
   function withdraw(address recipient, uint256 amount)
     external
-    override(OracleInterface, WithdrawalInterface)
+    override(OperatorInterface, WithdrawalInterface)
     onlyOwner()
     hasAvailableFunds(amount)
   {
@@ -264,7 +264,7 @@ contract Operator is
   function withdrawable()
     external
     view
-    override(OracleInterface, WithdrawalInterface)
+    override(OperatorInterface, WithdrawalInterface)
     returns (uint256)
   {
     return s_withdrawableTokens.sub(ONE_FOR_CONSISTENT_GAS_COST);
